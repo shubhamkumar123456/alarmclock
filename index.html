@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Geologica:wght@100..900&family=Kablammo&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body{
+            background-color: black;
+            color: white;
+            height: 100vh;
+            display: flex;
+            gap: 20px;
+        
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container{
+            width: 50%;
+            height: 400px;
+            display: none;
+           
+            /* background-color: aqua; */
+        }
+        .container.active{
+            display: block;
+        }
+        .timer{
+            height: 60%;
+            width: 100%;
+            background-color: yellow;
+            background-color: black;
+            color: aqua;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12vw;
+            background-image: url(https://t3.ftcdn.net/jpg/09/28/31/28/360_F_928312862_woFoZ8uKMDSi8RHth3hmTJDikMGMSdz4.jpg);
+            color: transparent;
+            background-clip: text;
+            /* text-shadow:0px 0px 10px orangered; */
+          
+        }
+        .bottom{
+            height: 40%;
+            width: 100%;
+            /* background-color: coral; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+        }
+        .bottom input, .bottom button{
+            padding: 10px;
+            background-image: url(https://t3.ftcdn.net/jpg/09/28/31/28/360_F_928312862_woFoZ8uKMDSi8RHth3hmTJDikMGMSdz4.jpg);
+            color: transparent;
+            background-clip: text;
+            border: 2px solid orange;
+        }
+        .needleClock{
+            width: 250px;
+            height: 250px;
+            background-color: violet;
+            border-radius: 100%;
+            position: relative;
+            background-image: url(https://cdn10.bigcommerce.com/s-4tvv3af7zd/products/184/images/478/11-lv__72037.1470233636.500.750.png?c=2);
+            /* background-size: cover; */
+            /* border: 5px solid red; */
+            background-position: center;
+            background-size:100% 100%;
+            display: none;
+            /* transform: scale(1.2); */
+        }
+        .needleClock.active{
+            display: block;
+        }
+        .seconds{
+            height: 40%;
+            width: 4px;
+            background-color: red;
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform: translateX(-50%);
+           
+            transform-origin: bottom;
+            border-radius: 100%;
+        }
+        .min{
+            height: 35%;
+            width: 5px;
+            background-color: brown;
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform: translateX(-50%);
+           
+            transform-origin: bottom;
+            border-radius: 100%;
+        }
+        .hr{
+            height: 28%;
+            width: 8px;
+            background-color: blue;
+            position: absolute;
+            left: 50%;
+            bottom: 50%;
+            transform: translateX(-50%);
+        
+            transform-origin: bottom;
+            border-radius: 100%;
+
+        }
+        .pointer{
+            width: 22px;
+            height: 22px;
+            border-radius: 100%;
+            background-color: black;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 10;
+            transform: translate(-50%,-50%);
+            
+        }
+        .timeChanger{
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .timeChanger button{
+            padding: 10px;
+            cursor: pointer;
+            background-image: url(https://t3.ftcdn.net/jpg/09/28/31/28/360_F_928312862_woFoZ8uKMDSi8RHth3hmTJDikMGMSdz4.jpg);
+            color: transparent;
+            background-clip: text;
+            border: 2px solid orange;
+        }
+        .timeChanger button:hover{
+          background-color: yellow;
+          border: 2px solid orange;
+        }
+
+        .title{
+            font-family: "Dancing Script", cursive;
+            font-size: 50px;
+            background-image: url(https://t3.ftcdn.net/jpg/09/28/31/28/360_F_928312862_woFoZ8uKMDSi8RHth3hmTJDikMGMSdz4.jpg);
+            color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="title" style="text-align: center;">Alarm clock Application</h1>
+    <div class="container active">
+      
+        <div class="timer"></div>
+        <div class="bottom">
+            <input onchange="handleDateChanger(this.value)" type="datetime-local">
+            <div class="btnBox">
+                <button onclick="startAlarm()">Start</button>
+                <button onclick="stopAlarm()">Stop</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="needleClock">
+        <div id="seconds" class="seconds"></div>
+        <div id="min" class="min"></div>
+        <div id="hr" class="hr"></div>
+        <div class="pointer"></div>
+    </div>
+
+    <div class="timeChanger">
+        <button onclick="handleSwap()">Swap Clock</button>
+    </div>
+
+    <script>
+
+        let secondsDiv = document.querySelector('#seconds')
+        let minDiv = document.querySelector('#min')
+        let hrDiv = document.querySelector('#hr')
+        let timerDiv = document.querySelector('.timer')
+        console.log(timerDiv)
+
+        setInterval(() => {
+
+            let time = new Date();
+        let hour = time.getHours()
+        let minutes = time.getMinutes()
+        let seconds = time.getSeconds()
+        timerDiv.innerHTML = `${hour}:${minutes}:${seconds}`
+
+        // seconds --> 60seconds == 360deg
+                    // 1second  == 360/60 ==> 6deg
+        
+        //minutes --> 60minute -->360deg
+                    // 1minute == 360/60 ==> 6deg
+        
+        //hours --> 12hours -->360deg
+                //  1hour --> 360/12  ==> 30deg
+
+
+        let secondsInDeg = seconds *6
+        let minutesInDeg = minutes *6 +seconds*0.1
+        let houresInDeg = hour *30 +minutes*0.5
+
+        // console.log(secondsInDeg)
+
+        secondsDiv.style.transform = `translateX(-50%) rotate(${secondsInDeg}deg)  `
+
+        minDiv.style.transform = `translateX(-50%) rotate(${minutesInDeg}deg)`
+        hrDiv.style.transform = `translateX(-50%) rotate(${houresInDeg}deg)`
+
+
+        }, 1000);
+
+                let alarmDate;
+        function handleDateChanger(value){
+            // console.log(value)
+             alarmDate = value
+        }
+
+        let audio = new Audio();
+        audio.src = "clock.wav"
+        
+        let x;
+
+        function startAlarm(){
+            let date = new Date();
+            console.log(date)
+
+            if(!alarmDate){
+                return alert('please set a alarm time')
+            }
+            // console.log(alarmDate)
+            let alarm = new Date(alarmDate)
+            console.log(alarm)
+            let timeGap = alarm - date;
+            console.log(timeGap)
+
+          x =  setTimeout(()=>{
+                audio.play()
+                audio.loop = true
+            },timeGap)
+
+            alert('alarm is set')
+
+        }
+
+
+        function stopAlarm(){
+                audio.pause()
+            clearTimeout(x)
+            alert('alarm is stopped')
+        }
+
+        let containerDiv = document.querySelector('.container')
+        let needleClockDiv = document.querySelector('.needleClock')
+
+        console.log(containerDiv)
+        console.log(needleClockDiv)
+
+        function handleSwap(){
+            containerDiv.classList.toggle('active')
+            needleClockDiv.classList.toggle('active')
+
+            console.log(containerDiv)
+            console.log(needleClockDiv)
+        }
+
+        // console.log(hour +':'+minutes+ ":"+ seconds)
+    </script>
+</body>
+</html>
